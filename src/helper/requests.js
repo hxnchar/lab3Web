@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export class Queries{
-    static AllRecords = () => `
+export class Queries {
+  static AllRecords = () => `
     query MyQuery {
       debtors {
         id
@@ -12,7 +12,7 @@ export class Queries{
     }
   `;
 
-    static InsertRecord = (surname, name, debt) => `
+  static InsertRecord = (surname, name, debt) => `
     mutation MyMutation {
         insert_debtors(objects: {surname: "${surname}", name: "${name}", debt: ${debt}}) {
         returning {
@@ -25,7 +25,7 @@ export class Queries{
     }
     `;
 
-    static DeleteNegative = () => `
+  static DeleteNegative = () => `
     mutation MyMutation {
       delete_debtors(where: {debt: {_lte: 0}}) {
         returning {
@@ -37,12 +37,13 @@ export class Queries{
     }
   `;
 
-  static SUBSCRIPTION_AllTodos = gql`subscription MySubscription {
-    debtors {
-      surname
-      name
-      debt
+  static SUBSCRIPTION_AllTodos = gql`
+    subscription MySubscription {
+      debtors {
+        surname
+        name
+        debt
+      }
     }
-  }
   `;
 }
