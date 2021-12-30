@@ -30,9 +30,15 @@
       .getElementById("newDebtorInputbox")
       .value.split(" ");
     if (newDebtorArr[0] == "" || newDebtorArr[1] == "") return;
-    await http.startExecuteMyMutation(
-      Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2])
-    );
+    try {
+      await http.startExecuteMyMutation(
+      Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2]));
+    }
+    catch{
+      document.getElementById("errorLabel").textContent = "Помилка";
+      return;
+    };
+    document.getElementById("errorLabel").textContent = "";
   };
 
   const RemoveDebtors = async () => {
@@ -63,6 +69,7 @@
           <td>{debtor.debt}</td>
         </tr>
       {/each}
+      <p id="errorLabel"></p>
     </table>
   {/if}
 </main>

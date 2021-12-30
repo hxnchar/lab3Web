@@ -38,12 +38,12 @@ export class Queries {
   `;
 
   static SUBSCRIPTION_AllTodos = gql`
-    subscription MySubscription {
-      debtors {
-        surname
-        name
-        debt
-      }
+  subscription MySubscription {
+    debtors {
+      surname
+      name
+      debt
     }
+  }
   `;
 }
