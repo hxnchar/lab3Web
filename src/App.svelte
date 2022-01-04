@@ -33,7 +33,10 @@
     newDebtorArr = document
       .getElementById("newDebtorInputbox")
       .value.split(" ");
-    if (newDebtorArr.length != 3 || newDebtorArr[0] == "" || newDebtorArr[1] == "") return;
+    if (newDebtorArr.length != 3 || newDebtorArr[0] == "" || newDebtorArr[1] == "") {
+      errorMSG.update(n=>n="Введіть ім'я, прізвище та борг");
+      return;
+    }
     try {
       await http.startExecuteMyMutation(
       Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2]));
