@@ -4,7 +4,11 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-
+  import { errorMSG } from './stores.js';
+  let errorMessage;
+  errorMSG.subscribe(value => {
+		errorMessage = value;
+	});
   function createApolloClient() {
     const wsLink = new WebSocketLink({
       uri: "wss://labaa3.herokuapp.com/v1/graphql",
@@ -29,16 +33,16 @@
     newDebtorArr = document
       .getElementById("newDebtorInputbox")
       .value.split(" ");
-    if (newDebtorArr[0] == "" || newDebtorArr[1] == "") return;
+    if (newDebtorArr.length != 3 || newDebtorArr[0] == "" || newDebtorArr[1] == "") return;
     try {
       await http.startExecuteMyMutation(
       Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2]));
     }
     catch{
-      document.getElementById("errorLabel").textContent = "Помилка";
+      errorMSG.update(n=>n="Помилка");
       return;
     };
-    document.getElementById("errorLabel").textContent = "";
+    errorMSG.update(n=>n="");
   };
 
   const RemoveDebtors = async () => {
@@ -69,7 +73,7 @@
           <td>{debtor.debt}</td>
         </tr>
       {/each}
-      <p id="errorLabel"></p>
+      <p>{errorMessage}</p>
     </table>
   {/if}
 </main>
