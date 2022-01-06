@@ -4,11 +4,11 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { errorMSG } from './stores.js';
+  import { errorMSG } from "./stores.js";
   let errorMessage;
   errorMSG.subscribe(value => {
-		errorMessage = value;
-	});
+    errorMessage = value;
+  });
   function createApolloClient() {
     const wsLink = new WebSocketLink({
       uri: "wss://labaa3.herokuapp.com/v1/graphql",
@@ -33,19 +33,23 @@
     newDebtorArr = document
       .getElementById("newDebtorInputbox")
       .value.split(" ");
-    if (newDebtorArr.length != 3 || newDebtorArr[0] == "" || newDebtorArr[1] == "") {
-      errorMSG.update(n=>n="Введіть ім'я, прізвище та борг");
+    if (
+      newDebtorArr.length != 3 ||
+      newDebtorArr[0] == "" ||
+      newDebtorArr[1] == ""
+    ) {
+      errorMSG.update(n => (n = "Введіть ім'я, прізвище та борг"));
       return;
     }
     try {
       await http.startExecuteMyMutation(
-      Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2]));
-    }
-    catch{
-      errorMSG.update(n=>n="Помилка");
+        Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2])
+      );
+    } catch {
+      errorMSG.update(n => (n = "Помилка"));
       return;
-    };
-    errorMSG.update(n=>n="");
+    }
+    errorMSG.update(n => (n = ""));
   };
 
   const RemoveDebtors = async () => {
