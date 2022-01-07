@@ -1,5 +1,5 @@
 class RequestHelper {
-  API_URL = "https://labaa3.herokuapp.com/v1/graphql";
+  API_URL = uri_from_env;
   async fetchGraphQL(operationsDoc, operationName, variables) {
     const result = await fetch(this.API_URL, {
       method: "POST",
