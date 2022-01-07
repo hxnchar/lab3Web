@@ -4,11 +4,11 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { errorMSG } from './stores.js';
+  import { errorMSG } from "./stores.js";
   let errorMessage;
   errorMSG.subscribe(value => {
-		errorMessage = value;
-	});
+    errorMessage = value;
+  });
   function createApolloClient() {
     const wsLink = new WebSocketLink({
       uri: uri_from_env,
@@ -27,7 +27,7 @@
   setClient(client);
 
   const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllTodos);
-
+  const newDeptorInfo = {};
   const AddDebtor = async () => {
     let newDebtorArr = [];
     newDebtorArr = document
@@ -72,19 +72,14 @@
 <main>
   {#if $debtorsArray.loading}
     <div>loading ...</div>
-    <Jumper size="60" color="#FF3E00" unit="px" />
   {:else if $debtorsArray.error}
     <div>Error!</div>
   {:else if $debtorsArray.data}
     <input bind:value={newDeptorInfo.name} />
     <input bind:value={newDeptorInfo.surname} />
     <input bind:value={newDeptorInfo.money} />
-    <button on:click={AddDebtor} disabled={addDebtorDisabled}
-      >Add debtor😈</button
-    >
-    <button on:click={RemoveDebtors} disabled={removeDebtorDisabled}
-      >Delete some debtors =)</button
-    >
+    <button on:click={AddDebtor}>Add debtor😈</button>
+    <button on:click={RemoveDebtors}>Delete some debtors =)</button>
     <table border="1">
       <caption>Debtors</caption>
       <tr>
@@ -101,11 +96,6 @@
       {/each}
     </table>
     <p>{errorMessage}</p>
-    {#if get(loadersCount) > 0}
-      <Jumper size="60" color="#FF3E00" unit="px" />
-      <Jumper size="60" color="#FF3E00" unit="px" />
-      <Jumper size="60" color="#FF3E00" unit="px" />
-    {/if}
   {/if}
 </main>
 
