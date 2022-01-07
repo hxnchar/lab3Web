@@ -109,7 +109,7 @@
     <p>{errorMessage}</p>
     {#if get(loadersCount) > 0}
       <Jumper size="60" color="#FF3E00" unit="px" />
-  {/if}
+    {/if}
   {/if}
   
 </main>
