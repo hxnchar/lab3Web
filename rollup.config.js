@@ -45,6 +45,7 @@ export default {
   plugins: [
     replace({
       uri_from_env: JSON.stringify(process.env.uri),
+      api_url_env: JSON.stringify(process.env.api_url),
     }),
     svelte({
       compilerOptions: {
