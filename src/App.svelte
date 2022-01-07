@@ -4,18 +4,11 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { errorMSG, loadersCount } from "./stores.js";
-  import { Jumper } from "svelte-loading-spinners";
-  import { get } from "svelte/store";
-
-  let errorMessage, countLoaders, addDebtorDisabled, removeDebtorDisabled;
-  const newDeptorInfo = {};
+  import { errorMSG } from './stores.js';
+  let errorMessage;
   errorMSG.subscribe(value => {
-    errorMessage = value;
-  });
-  loadersCount.subscribe(value => {
-    countLoaders = value;
-  });
+		errorMessage = value;
+	});
   function createApolloClient() {
     const wsLink = new WebSocketLink({
       uri: uri_from_env,
@@ -36,32 +29,27 @@
   const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllTodos);
 
   const AddDebtor = async () => {
-    addDebtorDisabled = true;
-    loadersCount.update(n => n + 1);
-    const { name, surname, money } = newDeptorInfo;
-    if (!name || !surname || !money) {
-      addDebtorDisabled = false;
-      loadersCount.update(n => n - 1);
-      errorMSG.set("Введіть ім'я, прізвище та борг");
+    let newDebtorArr = [];
+    newDebtorArr = document
+      .getElementById("newDebtorInputbox")
+      .value.split(" ");
+    if (
+      newDebtorArr.length != 3 ||
+      newDebtorArr[0] == "" ||
+      newDebtorArr[1] == ""
+    ) {
+      errorMSG.update(n => (n = "Введіть ім'я, прізвище та борг"));
       return;
     }
     try {
       await http.startExecuteMyMutation(
-        Queries.InsertRecord(
-          newDeptorInfo.name,
-          newDeptorInfo.surname,
-          newDeptorInfo.money
-        )
+        Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2])
       );
-      addDebtorDisabled = false;
-      loadersCount.update(n => n - 1);
     } catch {
-      errorMSG.set("Помилка");
-      addDebtorDisabled = false;
-      loadersCount.update(n => n - 1);
+      errorMSG.update(n => (n = "Помилка"));
       return;
     }
-    errorMSG.set("");
+    errorMSG.update(n => (n = ""));
   };
 
   const RemoveDebtors = async () => {
