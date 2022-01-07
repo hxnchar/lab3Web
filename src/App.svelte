@@ -4,11 +4,17 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { errorMSG } from "./stores.js";
-  let errorMessage;
+  import { errorMSG, loadersCount } from "./stores.js";
+  import { Jumper } from "svelte-loading-spinners";
+  import { get } from "svelte/store";
+  let errorMessage, countLoaders, addDebtorDisabled, removeDebtorDisabled;
   errorMSG.subscribe(value => {
     errorMessage = value;
   });
+  loadersCount.subscribe(value => {
+    countLoaders = value;
+  });
+  const newDeptorInfo = {};
   function createApolloClient() {
     const wsLink = new WebSocketLink({
       uri: uri_from_env,
@@ -27,29 +33,33 @@
   setClient(client);
 
   const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllTodos);
-  const newDeptorInfo = {};
   const AddDebtor = async () => {
-    let newDebtorArr = [];
-    newDebtorArr = document
-      .getElementById("newDebtorInputbox")
-      .value.split(" ");
-    if (
-      newDebtorArr.length != 3 ||
-      newDebtorArr[0] == "" ||
-      newDebtorArr[1] == ""
-    ) {
-      errorMSG.update(n => (n = "Введіть ім'я, прізвище та борг"));
+    addDebtorDisabled = true;
+    loadersCount.update(n => n + 1);
+    const { name, surname, money } = newDeptorInfo;
+    if (!name || !surname || !money) {
+      addDebtorDisabled = false;
+      loadersCount.update(n => n - 1);
+      errorMSG.set("Surname, name and debt are required!");
       return;
     }
     try {
       await http.startExecuteMyMutation(
-        Queries.InsertRecord(newDebtorArr[0], newDebtorArr[1], newDebtorArr[2])
+        Queries.InsertRecord(
+          newDeptorInfo.surname,
+          newDeptorInfo.name,
+          newDeptorInfo.money
+        )
       );
     } catch {
-      errorMSG.update(n => (n = "Помилка"));
+      errorMSG.set("Error occurred");
+      addDebtorDisabled = false;
+      loadersCount.update(n => n - 1);
       return;
     }
-    errorMSG.update(n => (n = ""));
+    addDebtorDisabled = false;
+    loadersCount.update(n => n - 1);
+    errorMSG.set("");
   };
 
   const RemoveDebtors = async () => {
@@ -58,7 +68,7 @@
     try {
       await http.startExecuteMyMutation(Queries.DeleteNegative());
     } catch {
-      errorMSG.set("Помилка");
+      errorMSG.set("Error occurred");
       removeDebtorDisabled = false;
       loadersCount.update(n => n - 1);
       return;
@@ -72,12 +82,13 @@
 <main>
   {#if $debtorsArray.loading}
     <div>loading ...</div>
+    <Jumper size="60" color="#FF3E00" unit="px" />
   {:else if $debtorsArray.error}
     <div>Error!</div>
   {:else if $debtorsArray.data}
-    <input bind:value={newDeptorInfo.name} />
-    <input bind:value={newDeptorInfo.surname} />
-    <input bind:value={newDeptorInfo.money} />
+    <input bind:value={newDeptorInfo.surname} placeholder="Surname" />
+    <input bind:value={newDeptorInfo.name} placeholder="Name" />
+    <input bind:value={newDeptorInfo.money} placeholder="Debt" />
     <button on:click={AddDebtor}>Add debtor😈</button>
     <button on:click={RemoveDebtors}>Delete some debtors =)</button>
     <table border="1">
@@ -96,6 +107,9 @@
       {/each}
     </table>
     <p>{errorMessage}</p>
+  {/if}
+  {#if get(loadersCount) > 0}
+      <Jumper size="60" color="#FF3E00" unit="px" />
   {/if}
 </main>
 
