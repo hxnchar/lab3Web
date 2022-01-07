@@ -37,9 +37,10 @@ export class Queries {
     }
   `;
 
-  static SUBSCRIPTION_AllTodos = gql`
+  static SUBSCRIPTION_AllDebtors = gql`
     subscription MySubscription {
       debtors {
+        id
         surname
         name
         debt

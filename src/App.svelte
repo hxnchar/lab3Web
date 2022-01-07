@@ -6,8 +6,6 @@
   import { WebSocketLink } from "@apollo/client/link/ws";
   import { errorMSG, loadersCount } from "./stores.js";
   import { Jumper } from "svelte-loading-spinners";
-  import { get } from "svelte/store";
-  import { afterUpdate } from "svelte";
   let errorMessage, countLoaders, addDebtorDisabled, removeDebtorDisabled;
   errorMSG.subscribe(value => {
     errorMessage = value;
@@ -33,7 +31,7 @@
   const client = createApolloClient();
   setClient(client);
 
-  const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllTodos);
+  const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllDebtors);
   const AddDebtor = async () => {
     addDebtorDisabled = true;
     loadersCount.update(n => n + 1);
@@ -90,8 +88,8 @@
     <input bind:value={newDeptorInfo.surname} placeholder="Surname" />
     <input bind:value={newDeptorInfo.name} placeholder="Name" />
     <input bind:value={newDeptorInfo.money} placeholder="Debt" />
-    <button on:click={AddDebtor}>Add debtor😈</button>
-    <button on:click={RemoveDebtors}>Delete some debtors =)</button>
+    <button on:click={AddDebtor} disabled={addDebtorDisabled}>Add debtor😈</button>
+    <button on:click={RemoveDebtors} disabled={removeDebtorDisabled}>Delete some debtors =)</button>
     <table border="1">
       <caption>Debtors</caption>
       <tr>
@@ -99,7 +97,7 @@
         <th>Name</th>
         <th>Debt</th>
       </tr>
-      {#each $debtorsArray.data.debtors as debtor}
+      {#each $debtorsArray.data.debtors as debtor (debtor.id)}
         <tr>
           <td>{debtor.surname}</td>
           <td>{debtor.name}</td>
