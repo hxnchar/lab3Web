@@ -88,8 +88,12 @@
     <input bind:value={newDeptorInfo.surname} placeholder="Surname" />
     <input bind:value={newDeptorInfo.name} placeholder="Name" />
     <input bind:value={newDeptorInfo.money} placeholder="Debt" />
-    <button on:click={AddDebtor} disabled={addDebtorDisabled}>Add debtor😈</button>
-    <button on:click={RemoveDebtors} disabled={removeDebtorDisabled}>Delete some debtors =)</button>
+    <button on:click={AddDebtor} disabled={addDebtorDisabled}
+      >Add debtor😈</button
+    >
+    <button on:click={RemoveDebtors} disabled={removeDebtorDisabled}
+      >Delete some debtors =)</button
+    >
     <table border="1">
       <caption>Debtors</caption>
       <tr>
