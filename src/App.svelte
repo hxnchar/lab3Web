@@ -7,6 +7,7 @@
   import { errorMSG, loadersCount } from "./stores.js";
   import { Jumper } from "svelte-loading-spinners";
   import { get } from "svelte/store";
+  import { afterUpdate } from "svelte";
   let errorMessage, countLoaders, addDebtorDisabled, removeDebtorDisabled;
   errorMSG.subscribe(value => {
     errorMessage = value;
@@ -107,11 +108,10 @@
       {/each}
     </table>
     <p>{errorMessage}</p>
-    {#if get(loadersCount) > 0}
+    <div style="visibility:{countLoaders > 0 ? 'visible' : 'hidden'}">
       <Jumper size="60" color="#FF3E00" unit="px" />
-    {/if}
+    </div>
   {/if}
-  
 </main>
 
 <style>
