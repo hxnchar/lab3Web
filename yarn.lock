@@ -2132,10 +2132,10 @@
   "resolved" "https://registry.npmjs.org/svelte-loading-spinners/-/svelte-loading-spinners-0.1.7.tgz"
   "version" "0.1.7"
 
-"svelte@^3.0.0", "svelte@^3.2.0", "svelte@>=3.5.0":
-  "integrity" "sha512-aGgrNCip5PQFNfq9e9tmm7EYxWLVHoFsEsmKrtOeRD8dmoGDdyTQ+21xd7qgFd8MNdKGSYvg7F9dr+Tc0yDymg=="
-  "resolved" "https://registry.npmjs.org/svelte/-/svelte-3.44.3.tgz"
-  "version" "3.44.3"
+"svelte@^3.0.0", "svelte@^3.2.0", "svelte@^3.45.0", "svelte@>=3.5.0":
+  "integrity" "sha512-6AWftH2eqqKLYH1HvKpuUWe8OfjflarhegN57P/Cqwc2Rb2F5oIdDtANU/jMscyZMzG0v6nTQox0siZR9cmRVQ=="
+  "resolved" "https://registry.npmjs.org/svelte/-/svelte-3.45.0.tgz"
+  "version" "3.45.0"
 
 "svg-tags@^1.0.0":
   "integrity" "sha1-WPcc7jvVGbWdSyqEO2x95krAR2Q="
