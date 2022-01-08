@@ -23,7 +23,7 @@ export class Queries {
         }
         }
     }
-    `;
+  `;
 
   static DeleteNegative = () => `
     mutation MyMutation {

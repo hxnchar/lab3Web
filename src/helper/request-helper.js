@@ -1,16 +1,16 @@
 class RequestHelper {
   API_URL = api_url_env;
   async fetchGraphQL(operationsDoc, operationName, variables) {
-    const result = await fetch(this.API_URL, {
+    return fetch(this.API_URL, {
       method: "POST",
       body: JSON.stringify({
         query: operationsDoc,
         variables: variables,
         operationName: operationName,
       }),
+    }).then(result => {
+      return result.json();
     });
-
-    return await result.json();
   }
 
   fetchMyQuery(operationsDoc) {
