@@ -66,7 +66,7 @@
     loadersCount.update(n => n + 1);
     try {
       await http.startExecuteMyMutation(Queries.DeleteNegative());
-    } catch {
+    } catch (e) {
       errorMSG.set("Error occurred: " + e.message);
       removeDebtorDisabled = false;
       loadersCount.update(n => n - 1);
