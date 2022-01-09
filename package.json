@@ -33,12 +33,12 @@
     "stylelint": "^14.1.0",
     "stylelint-config-recommended-scss": "^5.0.2",
     "stylelint-config-standard": "^24.0.0",
-    "stylelint-config-svelte-roboleary": "^0.3.0",
-    "svelte": "^3.45.0",
-    "svelte-loading-spinners": "^0.1.7",
-    "svelte-simple-modal": "^1.2.0"
+    "stylelint-config-svelte-roboleary": "^0.3.0"
   },
   "dependencies": {
+    "svelte": "^3.45.0",
+    "svelte-loading-spinners": "^0.1.7",
+    "svelte-simple-modal": "^1.2.0",
     "@apollo/client": "^3.5.5",
     "graphql": "^16.0.1",
     "sirv-cli": "^1.0.0",

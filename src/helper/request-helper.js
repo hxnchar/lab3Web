@@ -1,6 +1,6 @@
 class RequestHelper {
   API_URL = api_url_env;
-  async fetchGraphQL(operationsDoc, operationName, variables) {
+  fetchGraphQL(operationsDoc, operationName, variables) {
     return fetch(this.API_URL, {
       method: "POST",
       body: JSON.stringify({
