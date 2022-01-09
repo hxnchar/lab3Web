@@ -239,7 +239,7 @@
     z-index: 0;
   }
 
-  .overlay.background {
+  .overlay .background {
     width: 100%;
     height: 100%;
     background-color: var(--darkest-blue);
