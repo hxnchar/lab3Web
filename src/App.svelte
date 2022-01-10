@@ -83,7 +83,7 @@
   {:else if $debtorsArray.data}
     <header>Debtors list</header>
     <main>
-      {#if $debtorsArray.data.debtors.length == 0}
+      {#if $debtorsArray.data.debtors.length === 0}
         <h1>No deptors yet :(</h1>
       {:else}
         <table>
