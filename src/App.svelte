@@ -25,7 +25,7 @@
   const client = createApolloClient();
   setClient(client);
   const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllDebtors);
-  const newDeptorInfo = {};
+  let newDeptorInfo = {};
   const addDebtorQuery = mutation(Queries.InsertRecord);
   const deleteRecordQuery = mutation(Queries.DeleteRecord);
 
@@ -36,14 +36,13 @@
   }
 
   const AddDebtor = async () => {
-    $loadersCount++;
     const { name, surname, money } = newDeptorInfo;
     if (!name || !surname || !money) {
       $messageToUser = "Surname, name and debt are required!";
-      $loadersCount--;
       return;
     }
     try {
+      $loadersCount++;
       await addDebtorQuery({
         variables: {
           surname: newDeptorInfo.surname,
@@ -51,7 +50,7 @@
           debt: newDeptorInfo.money,
         },
       });
-      resetValues();
+      newDeptorInfo = {};
       $messageToUser = "Added successfully";
     } catch (e) {
       $messageToUser = `Error occurred while inserting: ${e.message}. Check values to be inserted`;
