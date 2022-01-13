@@ -67,10 +67,9 @@
     }
   };
 
-  const DeleteThis = async idToRemove => {
+  const DeleteThis = async (idToRemove) => {
     $loadersCount++;
     try {
-      console.log(idToRemove);
       await deleteRecordQuery({
         variables: {
           id: idToRemove,
@@ -219,6 +218,11 @@
   button:hover {
     background-color: var(--lightner-blue);
     transition-duration: var(--default-animation-time);
+  }
+
+  td button {
+    align-items: center;
+    justify-content: center;
   }
 
   th,
