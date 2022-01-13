@@ -220,11 +220,6 @@
     transition-duration: var(--default-animation-time);
   }
 
-  td button {
-    align-items: center;
-    justify-content: center;
-  }
-
   th,
   button,
   input {
