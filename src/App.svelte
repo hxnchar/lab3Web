@@ -3,8 +3,16 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe, mutation } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { errorMessage, loadersCount } from "./stores.js";
+  import { messageToUser, loadersCount, isOnline } from "./stores.js";
   import { BarLoader } from "svelte-loading-spinners";
+
+  window.onoffline = () => {
+    isOnline.set(false);
+  };
+
+  window.ononline = () => {
+    isOnline.set(true);
+  };
 
   function createApolloClient() {
     const wsLink = new WebSocketLink({
@@ -19,21 +27,26 @@
       cache,
     });
   }
-  let addDebtorDisabled, removeDebtorDisabled;
+
+  const defaultValue = "";
   const client = createApolloClient();
   setClient(client);
   const debtorsArray = subscribe(Queries.SUBSCRIPTION_AllDebtors);
   const newDeptorInfo = {};
   const addDebtorQuery = mutation(Queries.InsertRecord);
-  const deleteRecordsQuery = mutation(Queries.DeleteRecords);
+  const deleteRecordQuery = mutation(Queries.DeleteRecord);
+
+  function resetValues() {
+    newDeptorInfo.name = defaultValue;
+    newDeptorInfo.surname = defaultValue;
+    newDeptorInfo.money = defaultValue;
+  }
 
   const AddDebtor = async () => {
-    addDebtorDisabled = true;
     $loadersCount++;
     const { name, surname, money } = newDeptorInfo;
     if (!name || !surname || !money) {
-      addDebtorDisabled = false;
-      $errorMessage = "Surname, name and debt are required!";
+      $messageToUser = "Surname, name and debt are required!";
       $loadersCount--;
       return;
     }
@@ -45,80 +58,92 @@
           debt: newDeptorInfo.money,
         },
       });
-      $errorMessage = "";
+      resetValues();
+      $messageToUser = "Added successfully";
     } catch (e) {
-      $errorMessage = `Error occurred: ${e.message}`;
+      $messageToUser = `Error occurred while inserting: ${e.message}. Check values to be inserted`;
     } finally {
-      addDebtorDisabled = false;
       $loadersCount--;
     }
   };
 
-  const RemoveDebtors = async () => {
-    removeDebtorDisabled = true;
+  const DeleteThis = async idToRemove => {
     $loadersCount++;
     try {
-      await deleteRecordsQuery();
-      $errorMessage = "";
+      console.log(idToRemove);
+      await deleteRecordQuery({
+        variables: {
+          id: idToRemove,
+        },
+      });
+      $messageToUser = "Deleted successfully";
     } catch (e) {
-      $errorMessage = `Error occurred: ${e.message}`;
+      $messageToUser = `Error occurred: ${e.message}`;
     } finally {
       $loadersCount--;
-      removeDebtorDisabled = false;
     }
   };
 </script>
 
 <main>
-  {#if $debtorsArray.loading}
-    <div class="overlay">
-      <BarLoader size="120" color="white" unit="px" />
-      <div class="overlay background" />
-    </div>
-  {:else if $debtorsArray.error}
-    <div class="overlay">
-      <h1>Error occurred :(</h1>
-      <div class="overlay background" />
-    </div>
-  {:else if $debtorsArray.data}
-    <header>Debtors list</header>
-    <main>
-      {#if $debtorsArray.data.debtors.length === 0}
-        <h1>No deptors yet :(</h1>
-      {:else}
-        <table>
-          <tr>
-            <th>Surname</th>
-            <th>Name</th>
-            <th>Debt</th>
-          </tr>
-          {#each $debtorsArray.data.debtors as debtor (debtor.id)}
+  {#if $isOnline}
+    {#if $debtorsArray.loading}
+      <div class="overlay">
+        <h1>Loading data</h1>
+        <BarLoader size="120" color="white" unit="px" />
+        <div class="overlay background" />
+      </div>
+    {:else if $debtorsArray.error}
+      <div class="overlay">
+        <h1>Error occurred :(</h1>
+        <div class="overlay background" />
+      </div>
+    {:else if $debtorsArray.data}
+      <header>Debtors list</header>
+      <main>
+        {#if $debtorsArray.data.debtors.length === 0}
+          <h1>No deptors yet :(</h1>
+        {:else}
+          <table>
             <tr>
-              <td>{debtor.surname}</td>
-              <td>{debtor.name}</td>
-              <td>{debtor.debt}</td>
+              <th>Surname</th>
+              <th>Name</th>
+              <th>Debt</th>
+              <th>Action</th>
             </tr>
-          {/each}
-        </table>
-      {/if}
-      <nav>
-        <input bind:value={newDeptorInfo.surname} placeholder="Surname" />
-        <input bind:value={newDeptorInfo.name} placeholder="Name" />
-        <input bind:value={newDeptorInfo.money} placeholder="Debt" />
-      </nav>
-      <nav>
-        <button on:click={AddDebtor} disabled={addDebtorDisabled}
-          >Add debtor</button
-        >
-        <button on:click={RemoveDebtors} disabled={removeDebtorDisabled}
-          >Delete some debtors</button
-        >
-      </nav>
-    </main>
-    <footer>
-      <div class="errorLabel">{$errorMessage}</div>
-    </footer>
-    <div class="overlay" class:visible={!$loadersCount}>
+            {#each $debtorsArray.data.debtors as debtor (debtor.id)}
+              <tr>
+                <td>{debtor.surname}</td>
+                <td>{debtor.name}</td>
+                <td>{debtor.debt}</td>
+                <td
+                  ><button on:click={() => DeleteThis(debtor.id)}>Delete</button
+                  ></td
+                >
+              </tr>
+            {/each}
+          </table>
+        {/if}
+        <nav>
+          <input bind:value={newDeptorInfo.surname} placeholder="Surname" />
+          <input bind:value={newDeptorInfo.name} placeholder="Name" />
+          <input bind:value={newDeptorInfo.money} placeholder="Debt" />
+        </nav>
+        <nav>
+          <button on:click={AddDebtor}>Add debtor</button>
+        </nav>
+      </main>
+      <footer>
+        <div class="errorLabel">{$messageToUser}</div>
+      </footer>
+      <div class="overlay" class:visible={!$loadersCount}>
+        <BarLoader size="120" color="white" unit="px" />
+        <div class="overlay background" />
+      </div>
+    {/if}
+  {:else}
+    <div class="overlay">
+      <h1>Waiting the internet connection to be restored</h1>
       <BarLoader size="120" color="white" unit="px" />
       <div class="overlay background" />
     </div>
@@ -234,6 +259,7 @@
     top: 0;
     left: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 0;

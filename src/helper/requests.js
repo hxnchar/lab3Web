@@ -1,14 +1,13 @@
 import { gql } from "@apollo/client";
 
 export class Queries {
-  static DeleteRecords = gql`
-    mutation MyMutation {
-      delete_debtors(where: { debt: { _lte: 0 } }) {
-        returning {
-          debt
-          name
-          surname
-        }
+  static DeleteRecord = gql`
+    mutation MyMutation($id: uuid!) {
+      delete_debtors_by_pk(id: $id) {
+        id
+        surname
+        name
+        debt
       }
     }
   `;
