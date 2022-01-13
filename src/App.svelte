@@ -67,7 +67,7 @@
     }
   };
 
-  const DeleteThis = async (idToRemove) => {
+  const DeleteThis = async idToRemove => {
     $loadersCount++;
     try {
       await deleteRecordQuery({
