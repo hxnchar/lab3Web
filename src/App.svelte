@@ -3,16 +3,9 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe, mutation } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { messageToUser, loadersCount, isOnline } from "./stores.js";
+  import { messageToUser, loadersCount } from "./stores.js";
   import { BarLoader } from "svelte-loading-spinners";
-
-  window.onoffline = () => {
-    isOnline.set(false);
-  };
-
-  window.ononline = () => {
-    isOnline.set(true);
-  };
+  let online;
 
   function createApolloClient() {
     const wsLink = new WebSocketLink({
@@ -84,8 +77,10 @@
   };
 </script>
 
+<svelte:window bind:online />
+
 <main>
-  {#if $isOnline}
+  {#if online}
     {#if $debtorsArray.loading}
       <div class="overlay">
         <h1>Loading data</h1>
