@@ -3,9 +3,8 @@
   import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
   import { setClient, subscribe, mutation } from "svelte-apollo";
   import { WebSocketLink } from "@apollo/client/link/ws";
-  import { messageToUser, loadersCount } from "./stores.js";
   import { BarLoader } from "svelte-loading-spinners";
-  let online;
+  let online, messageToUser, loadersCount;
 
   function createApolloClient() {
     const wsLink = new WebSocketLink({
@@ -38,11 +37,11 @@
   const AddDebtor = async () => {
     const { name, surname, money } = newDeptorInfo;
     if (!name || !surname || !money) {
-      $messageToUser = "Surname, name and debt are required!";
+      messageToUser = "Surname, name and debt are required!";
       return;
     }
     try {
-      $loadersCount++;
+      loadersCount++;
       await addDebtorQuery({
         variables: {
           surname: newDeptorInfo.surname,
@@ -51,27 +50,27 @@
         },
       });
       newDeptorInfo = {};
-      $messageToUser = "Added successfully";
+      messageToUser = "Added successfully";
     } catch (e) {
-      $messageToUser = `Error occurred while inserting: ${e.message}. Check values to be inserted`;
+      messageToUser = `Error occurred while inserting: ${e.message}. Check values to be inserted`;
     } finally {
-      $loadersCount--;
+      loadersCount--;
     }
   };
 
   const DeleteThis = async idToRemove => {
-    $loadersCount++;
+    loadersCount++;
     try {
       await deleteRecordQuery({
         variables: {
           id: idToRemove,
         },
       });
-      $messageToUser = "Deleted successfully";
+      messageToUser = "Deleted successfully";
     } catch (e) {
-      $messageToUser = `Error occurred: ${e.message}`;
+      messageToUser = `Error occurred: ${e.message}`;
     } finally {
-      $loadersCount--;
+      loadersCount--;
     }
   };
 </script>
@@ -127,9 +126,9 @@
         </nav>
       </main>
       <footer>
-        <div class="errorLabel">{$messageToUser}</div>
+        <div class="errorLabel">{messageToUser}</div>
       </footer>
-      <div class="overlay" class:visible={!$loadersCount}>
+      <div class="overlay" class:visible={!loadersCount}>
         <BarLoader size="120" color="white" unit="px" />
         <div class="overlay background" />
       </div>
